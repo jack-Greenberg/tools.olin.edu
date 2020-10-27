@@ -1,7 +1,11 @@
 import { createStore, combineReducers } from 'redux';
 
-const rootReducer = combineReducers({
+import authReducer from "./auth";
 
+export const rootReducer = combineReducers({
+  auth: authReducer
 });
 
-export default rootReducer;
+const store = createStore(rootReducer);
+
+export default store;

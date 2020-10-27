@@ -1,5 +1,5 @@
 from flask import g
-from graphene import Field, Int, Mutation, ObjectType, String, List
+from graphene import Field, Mutation, ObjectType, String, List
 from graphene_sqlalchemy import SQLAlchemyObjectType
 
 from tools.utils import Role
@@ -27,13 +27,13 @@ Queries
 
 
 class ToolQuery(ObjectType):
-    tool = Field(Tool, id=Int(required=True))
+    tool = Field(Tool, name=String(required=True))
     tools = List(Tool)
     tools_by_category = List(Tool, category=String(required=True))
 
     @staticmethod
-    def resolve_tool(self, info, id=0):
-        return g.db_session.query(ToolModel).filter_by(id=id).first()
+    def resolve_tool(self, info, name=""):
+        return g.db_session.query(ToolModel).filter_by(name=name).first()
 
     @staticmethod
     def resolve_tools(self, info):

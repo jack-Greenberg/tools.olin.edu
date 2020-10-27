@@ -1,7 +1,2 @@
-// import React, { Component } from "react";
-//
-// class ScopedRoute extends Component {
-//   render () {
-//
-//   }
-// }
+export { logout, login } from "./reducer";
+export { default } from "./reducer";

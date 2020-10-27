@@ -1,65 +1,56 @@
-import React, { useEffect, useState } from "react";
-import "./App.scss";
+import React from "react";
+import { useQuery } from "@apollo/react-hooks";
+import gql from "graphql-tag";
+import { Provider } from "react-redux";
+
 import Router from "./Router";
-import axios from "axios";
+import store from "./Reducer";
+import { login, logout } from "./auth";
+import "./App.scss";
 
-const getCurrentUser = async (set) => {
-  try {
-    const response = await axios.post("/api/", {
-      "query": `
-        query getCurrentUser {
-          me {
-            userId
-            displayName
-            firstName
-          }
-        }
-      `
-    })
-    set(response.data);
-  } catch (error) {
-    set(error.response);
-
-    if (error.response.status === 401) {
-      console.warn("User not authenticated");
-    } else {
-      throw new Error("Error fetching current user")
-    }
-  }
+const status = {
+  UNAUTHORIZED: 401,
+  NOT_FOUND: 404,
 }
 
+const WHOAMI = gql`
+  query getCurrentUser {
+    me {
+      id
+      userId
+      displayName
+      firstName
+    }
+  }
+`
 const App = () => {
-  var [response, setResponse] = useState(null);
+  const { loading, error, data } = useQuery(WHOAMI);
 
-  useEffect(() => {
-    getCurrentUser(setResponse);
-  }, [])
+  if (error) {
+    var { statusCode } = error.networkError;
 
-  if (!response) {
-    return (
-      <div>
-        Loading...
-      </div>
-    )
+    switch (statusCode) {
+      case status.UNAUTHORIZED:
+        store.dispatch(logout());
+        break;
+      default:
+        break;
+    }
+  } else if (data) {
+    store.dispatch(login(data.me));
   }
 
-  if (response.status === 401) {
-    return (
-      <div>
-        <a href="/auth/login">Click here to log in.</a>
-      </div>
-    )
+  if (loading) {
+    return <h1>Loading...</h1>;
   }
 
   return (
-    <div>
-      <p>Welcome {response.data.me.firstName}</p>
-    </div>
+    <>
+      <Provider store={store}>
+        <Router />
+      </Provider>
+    </>
   )
-
-  // return (
-  //   <Router />
-  // )
 }
 
 export default App;

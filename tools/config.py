@@ -7,7 +7,7 @@ import os
 class BaseConfig(object):
     TEMPLATES_AUTO_RELOAD = False
     JWT_TOKEN_LOCATION = ["cookies"]
-    JWT_ACCESS_COOKIE_PATH = "/auth/refresh"
+    JWT_ACCESS_COOKIE_PATH = "/api/"
     JWT_COOKIE_CSRF_PROTECT = False
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
